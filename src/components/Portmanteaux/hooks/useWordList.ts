@@ -12,7 +12,5 @@ export function useWordList(): string[] {
       .then(setWordList);
   }, []);
 
-  console.log(wordList);
-
   return wordList;
 }

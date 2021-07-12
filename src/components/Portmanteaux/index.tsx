@@ -86,7 +86,7 @@ export function Portmanteaux({
   const wordList = usePortmanteauxList();
   const matchingWordList = React.useMemo(() => {
     return wordList
-      .filter((word) => word.includes(filterText ?? ''))
+      .filter((word) => word.startsWith(filterText ?? ''))
       .sort(function (a, b) {
         return b.length - a.length || a.localeCompare(b);
       });
