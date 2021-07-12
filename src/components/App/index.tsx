@@ -5,7 +5,7 @@ import { TextInput } from '../../components/TextInput';
 import { Portmanteaux } from '../../components/Portmanteaux';
 import { Colors } from '../../constants/styles';
 
-const Body = styled.body`
+const Body = styled.span`
   background: ${Colors.BACKGROUND};
   color: ${Colors.FOREGROUND};
 `;

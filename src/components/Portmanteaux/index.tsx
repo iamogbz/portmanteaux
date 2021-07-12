@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { Colors } from "../../constants/styles";
-import { usePormanteauxList } from './usePormanteauxList';
+import { usePortmanteauxList } from './usePortmanteauxList';
 
 
 const Word = styled.span`
@@ -13,7 +13,7 @@ const Word = styled.span`
 `;
 
 export function Portmanteaux(props: { filterText?: string }): JSX.Element {
-    const wordList = usePormanteauxList();
+    const wordList = usePortmanteauxList();
     const matchingWordList = React.useMemo(() => {
         return wordList.filter((word) => word.includes(props.filterText ?? ""));
     }, [props.filterText]);

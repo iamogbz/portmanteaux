@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { useWordList } from './useWordList';
+import { useWordList } from "./useWordList";
 
 function concatSets<T>(...sets: Set<T>[]): Set<T> {
   return sets.reduce((acc, val) => {
@@ -10,51 +10,51 @@ function concatSets<T>(...sets: Set<T>[]): Set<T> {
 }
 
 function buildPortmaneauxChain(wordList: string[]) {
-  const wordToSuffixes: Record<string, Set<string>> = {};
-  const prefixesToWords: Record<string, Set<string>> = {};
+  const wordToSuffixes: Map<string, Set<string>> = new Map();
+  const prefixesToWords: Map<string, Set<string>> = new Map();
 
   for (const word of wordList) {
-    if (!wordToSuffixes[word]) {
-      wordToSuffixes[word] = new Set();
+    if (!wordToSuffixes.has(word)) {
+      wordToSuffixes.set(word, new Set());
     }
     for (let i = 3; i < word.length; i++) {
-      wordToSuffixes[word].add(word.substr(-i));
+      wordToSuffixes.get(word)?.add(word.substr(-i));
       const prefix = word.substr(0, i);
-      if (!prefixesToWords[prefix]) {
-        prefixesToWords[prefix] = new Set();
+      if (!prefixesToWords.has(prefix)) {
+        prefixesToWords.set(prefix, new Set());
       }
-      prefixesToWords[prefix].add(word);
+      prefixesToWords.get(prefix)?.add(word);
     }
   }
 
   function buildPortmanteaux(
     word: string,
-    portmanteaux = '',
+    portmanteaux = "",
     skip: Set<string> = new Set()
   ): Set<string> {
-    const suffixes = wordToSuffixes[word];
+    const suffixes = Array.from(wordToSuffixes.get(word) ?? []).filter(
+      (suffix) => skip.has(suffix)
+    );
     const nextPortmanteaux = portmanteaux.substr(-word.length) + word;
     const nextSkip = new Set([...skip, ...suffixes, word]);
     return concatSets(
-      ...Array.from(suffixes)
-        .filter(suffix => skip.has(suffix))
-        .map(nextWord =>
-          buildPortmanteaux(nextWord, nextPortmanteaux, nextSkip)
-        )
+      ...suffixes.map((nextWord) =>
+        buildPortmanteaux(nextWord, nextPortmanteaux, nextSkip)
+      )
     );
   }
 
   return concatSets(
-    ...Object.keys(wordToSuffixes).map(word => buildPortmanteaux(word))
+    ...Array.from(wordToSuffixes.keys()).map((word) => buildPortmanteaux(word))
   );
 }
 
-function usePormanteauxList(): string[] {
+export function usePortmanteauxList(): string[] {
   const wordList = useWordList();
   const [portmanteauxList, setPortmanteauxList] = React.useState<string[]>([]);
 
   const wordsWithAtLeastUniqueLetters = React.useMemo(() => {
-    return wordList.filter(word => new Set(word.split('')).size > 2);
+    return wordList.filter((word) => new Set(word.split("")).size > 2);
   }, [wordList]);
 
   console.log(wordsWithAtLeastUniqueLetters);

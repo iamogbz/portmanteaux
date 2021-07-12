@@ -8,7 +8,8 @@ export function useWordList(): string[] {
       'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt'
     )
       .then(response => response.text())
-      .then(words => setWordList(words.split('\n')));
+      .then(words => words.split('\n').map(w => w.trim()))
+      .then(setWordList);
   }, []);
 
   console.log(wordList);
