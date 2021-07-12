@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import { Colors } from '../../constants/styles';
 
 const StyledInput = styled.input`
-  border: solid 1px ${Colors.FOREGROUND};
+  border: solid 3px ${Colors.FOREGROUND};
   border-radius: 4px;
   padding: 8px;
 
   &:active,
   &:hover {
-    border-bottom: solid 2px ${Colors.PRIMARY};
+    border-color: ${Colors.PRIMARY};
   }
 `;
 

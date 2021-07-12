@@ -2,13 +2,6 @@ import * as React from 'react';
 
 import { useWordList } from './useWordList';
 
-function concatSets<T>(...sets: Set<T>[]): Set<T> {
-  return sets.reduce((acc, val) => {
-    val.forEach(acc.add);
-    return acc;
-  }, new Set<T>());
-}
-
 function buildPortmaneauxChain(wordList: string[]) {
   const wordToSuffixes: Map<string, Set<string>> = new Map();
   const prefixesToWords: Map<string, Set<string>> = new Map();
@@ -19,7 +12,7 @@ function buildPortmaneauxChain(wordList: string[]) {
     }
     for (let i = 3; i < word.length; i++) {
       wordToSuffixes.get(word)?.add(word.substr(-i));
-      const prefix = word.substr(0, i);
+      const prefix = word.substring(0, i);
       if (!prefixesToWords.has(prefix)) {
         prefixesToWords.set(prefix, new Set());
       }
@@ -27,26 +20,24 @@ function buildPortmaneauxChain(wordList: string[]) {
     }
   }
 
-  function buildPortmanteaux(
-    word: string,
-    portmanteaux = '',
-    skip: Set<string> = new Set()
-  ): Set<string> {
-    const suffixes = Array.from(wordToSuffixes.get(word) ?? []).filter(
-      (suffix) => skip.has(suffix)
-    );
-    const nextPortmanteaux = portmanteaux.substr(-word.length) + word;
-    const nextSkip = new Set([...skip, ...suffixes, word]);
-    return concatSets(
-      ...suffixes.map((nextWord) =>
-        buildPortmanteaux(nextWord, nextPortmanteaux, nextSkip)
-      )
-    );
+  const allPortmanteaux = new Set<string>();
+
+  const stack: [string, string, Set<string>][] = Array.from(wordToSuffixes.keys()).map(w => [w, '', new Set()]);
+
+  while (stack.length && allPortmanteaux.size < 10) {
+    const [suffix, portmanteaux, skip] = stack.pop()!;
+    for (const nextWord of prefixesToWords.get(suffix) ?? []) {
+      const nextPortmanteaux = portmanteaux + nextWord.substr(0, suffix.length);
+      const suffixes = Array.from(wordToSuffixes.get(nextWord) ?? []).filter(
+        (suffix) => !skip.has(suffix)
+      );
+      if (!suffixes.length) allPortmanteaux.add(nextPortmanteaux);
+      const nextSkip = new Set([...skip, ...suffixes, nextWord]);
+      suffixes.forEach(nextSuffix => stack.push([nextSuffix, nextPortmanteaux, nextSkip]))
+    }
   }
 
-  return concatSets(
-    ...Array.from(wordToSuffixes.keys()).map((word) => buildPortmanteaux(word))
-  );
+  return allPortmanteaux;
 }
 
 export function usePortmanteauxList(): string[] {

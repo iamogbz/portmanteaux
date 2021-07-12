@@ -12,6 +12,8 @@
     "react-helmet": "^6.1.0",
     "react-is": ">= 16.8.0",
     "react-scripts-ts": "latest",
+    "react-virtualized-auto-sizer": "^1.0.5",
+    "react-window": "^1.8.6",
     "styled-components": "^5.3.0",
     "typescript": "latest"
   },
@@ -20,5 +22,9 @@
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
+  },
+  "devDependencies": {
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
+    "@types/react-window": "^1.8.4"
   }
 }
