@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { useWordList } from "./useWordList";
+import { useWordList } from './useWordList';
 
 function concatSets<T>(...sets: Set<T>[]): Set<T> {
   return sets.reduce((acc, val) => {
@@ -29,7 +29,7 @@ function buildPortmaneauxChain(wordList: string[]) {
 
   function buildPortmanteaux(
     word: string,
-    portmanteaux = "",
+    portmanteaux = '',
     skip: Set<string> = new Set()
   ): Set<string> {
     const suffixes = Array.from(wordToSuffixes.get(word) ?? []).filter(
@@ -54,7 +54,7 @@ export function usePortmanteauxList(): string[] {
   const [portmanteauxList, setPortmanteauxList] = React.useState<string[]>([]);
 
   const wordsWithAtLeastUniqueLetters = React.useMemo(() => {
-    return wordList.filter((word) => new Set(word.split("")).size > 2);
+    return wordList.filter((word) => new Set(word.split('')).size > 2);
   }, [wordList]);
 
   console.log(wordsWithAtLeastUniqueLetters);
