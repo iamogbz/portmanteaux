@@ -64,7 +64,7 @@ function buildPortmaneauxChain(wordList: string[]) {
   const allPortmanteauPaths = findAllPaths(
     wordGraph,
     TOKEN_SOURCE,
-    TOKEN_TARGET
+    TOKEN_TARGET,
   );
   const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
     const path = pathWithEnds.slice(1, -1);

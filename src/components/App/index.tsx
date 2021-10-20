@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { createGlobalStyle } from 'styled-components';
-import { Colors } from '../../constants/styles';
-import { TextInput } from '../../components/TextInput';
 import { Portmanteaux } from '../../components/Portmanteaux';
+import { TextInput } from '../../components/TextInput';
+import { Colors } from '../../constants/styles';
 
 const GlobalStyle = createGlobalStyle`
   html, body, #root {
@@ -19,13 +19,13 @@ const GlobalStyle = createGlobalStyle`
 
 export function App(): JSX.Element {
   const [textValue, setTextValue] = React.useState('');
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> =
+  const onChange: React.ChangeEventHandler<HTMLInputElement> =
     React.useCallback(
       function handleChange(e) {
         e.preventDefault();
         setTimeout(() => setTextValue(e.target.value), 300);
       },
-      [setTextValue]
+      [setTextValue],
     );
 
   return (
@@ -40,13 +40,13 @@ export function App(): JSX.Element {
           alignItems: 'center',
           backgroundColor: Colors.PRIMARY,
           display: 'flex',
+          height: 42,
           justifyContent: 'center',
           padding: 4,
-          height: 42,
         }}
       >
         <TextInput
-          onChange={handleChange}
+          onChange={onChange}
           placeholder="Type to filter portmanteaux"
           style={{ textAlign: 'center', width: 400 }}
         />

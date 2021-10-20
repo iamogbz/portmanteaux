@@ -1,11 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {
   FixedSizeGrid as Grid,
   FixedSizeGridProps,
   GridChildComponentProps,
 } from 'react-window';
+import styled from 'styled-components';
 
 import { Colors } from '../../constants/styles';
 import { withProps } from './hocs/withProps';
@@ -26,12 +26,12 @@ const Word = styled.span`
   }
 `;
 
-interface AutoSizeCellProps extends GridChildComponentProps<string[]> {
+interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
   gridProps: FixedSizeGridProps<string[]>;
   getValue: (
     columnCount: number,
     columnIndex: number,
-    rowIndex: number
+    rowIndex: number,
   ) => string;
 }
 
@@ -41,7 +41,7 @@ function AutoSizeCell({
   gridProps: { columnCount },
   rowIndex,
   style,
-}: AutoSizeCellProps) {
+}: IAutoSizeCellProps) {
   return (
     <span style={style}>
       <Word>{getValue(columnCount, columnIndex, rowIndex)}</Word>
@@ -49,7 +49,7 @@ function AutoSizeCell({
   );
 }
 
-interface AutoSizeGridProps
+interface IAutoSizeGridProps
   extends Omit<
     FixedSizeGridProps<string[]>,
     'columnCount' | 'rowCount' | 'height' | 'width'
@@ -57,15 +57,15 @@ interface AutoSizeGridProps
   valueCount: number;
 }
 
-function AutoSizeGrid(props: AutoSizeGridProps) {
+function AutoSizeGrid(props: IAutoSizeGridProps) {
   return (
     <AutoSizer>
       {({ height, width }) => {
         const columnCount = Math.floor(width / props.columnWidth);
         const gridProps = {
           columnCount,
-          rowCount: Math.ceil(props.valueCount / columnCount),
           height: height - 50,
+          rowCount: Math.ceil(props.valueCount / columnCount),
           width,
           ...props,
         };
@@ -87,21 +87,19 @@ export function Portmanteaux({
   const matchingWordList = React.useMemo(() => {
     return wordList
       .filter((word) => word.includes(filterText ?? ''))
-      .sort(function (a, b) {
-        return b.length - a.length || a.localeCompare(b);
-      });
+      .sort((a, b) => b.length - a.length || a.localeCompare(b));
   }, [wordList, filterText]);
 
-  const getValue: AutoSizeCellProps['getValue'] = React.useCallback(
+  const getValue: IAutoSizeCellProps['getValue'] = React.useCallback(
     (columnCount, columnIndex, rowIndex) => {
       const index = columnIndex + columnCount * rowIndex;
       return matchingWordList[index];
     },
-    [matchingWordList]
+    [matchingWordList],
   );
 
   if (!matchingWordList.length) {
-    return <div style={{ textAlign: 'center'}}><h2>No results</h2></div>
+    return <div style={{ textAlign: 'center'}}><h2>No results</h2></div>;
   }
 
   return (

@@ -19,7 +19,7 @@ export function TextInput(
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   > &
-    React.RefAttributes<HTMLInputElement>
+    React.RefAttributes<HTMLInputElement>,
 ): JSX.Element {
   return <StyledInput {...props} />;
 }
