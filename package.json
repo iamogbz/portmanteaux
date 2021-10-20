@@ -5,26 +5,28 @@
   "dependencies": {
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-helmet": "6.1.0",
-    "react-is": "17.0.2",
-    "react-scripts-ts": "3.1.0",
+    "react-helmet": "^6.1.0",
+    "react-is": "^17.0.2",
+    "react-scripts-ts": "^3.1.0",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.6",
-    "styled-components": "5.3.3",
+    "styled-components": "^5.3.3",
     "typescript": "4.4.4"
   },
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "lint": "tslint -p tsconfig.json --fix"
   },
   "devDependencies": {
-    "@types/react": "17.0.30",
-    "@types/react-dom": "17.0.9",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
     "@types/react-helmet": "6.1.4",
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
-    "@types/styled-components": "5.1.15"
+    "@types/styled-components": "^5.1.15",
+    "tslint": "^5.20.1"
   }
 }

@@ -1,24 +1,21 @@
 {
   "compilerOptions": {
-      "allowSyntheticDefaultImports": true,
-      "baseUrl": ".",
-      "declaration": true,
-      "downlevelIteration": true,
-      "esModuleInterop": true,
-      "jsx": "react",
-      "lib": ["DOM", "ES2016"],
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "noFallthroughCasesInSwitch": true,
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "outDir": "./dist",
-      "skipLibCheck": true,
-      "strict": true,
-      "target": "es5"
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["DOM", "ES2016"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es5"
   },
-  "exclude": [
-      "dist",
-      "node_modules"
-  ]
+  "exclude": ["dist", "node_modules"]
 }

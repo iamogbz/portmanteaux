@@ -27,7 +27,7 @@ const Word = styled.span`
 `;
 
 interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
-  gridProps: FixedSizeGridProps<string[]>;
+  columnCount: number;
   getValue: (
     columnCount: number,
     columnIndex: number,
@@ -36,9 +36,9 @@ interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
 }
 
 function AutoSizeCell({
+  columnCount,
   columnIndex,
   getValue,
-  gridProps: { columnCount },
   rowIndex,
   style,
 }: IAutoSizeCellProps) {
@@ -52,12 +52,13 @@ function AutoSizeCell({
 interface IAutoSizeGridProps
   extends Omit<
     FixedSizeGridProps<string[]>,
-    'columnCount' | 'rowCount' | 'height' | 'width'
+    'children' | 'columnCount' | 'rowCount' | 'height' | 'width'
   > {
   valueCount: number;
+  children: React.ComponentType<Optional<IAutoSizeCellProps, 'getValue'>>;
 }
 
-function AutoSizeGrid(props: IAutoSizeGridProps) {
+function AutoSizeGrid({ children, ...props }: IAutoSizeGridProps) {
   return (
     <AutoSizer>
       {({ height, width }) => {
@@ -70,7 +71,7 @@ function AutoSizeGrid(props: IAutoSizeGridProps) {
           ...props,
         };
         return (
-          <Grid {...gridProps}>{withProps({ gridProps }, props.children)}</Grid>
+          <Grid {...gridProps}>{withProps({ columnCount }, children)}</Grid>
         );
       }}
     </AutoSizer>
@@ -99,7 +100,11 @@ export function Portmanteaux({
   );
 
   if (!matchingWordList.length) {
-    return <div style={{ textAlign: 'center'}}><h2>No results</h2></div>;
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <h2>No results</h2>
+      </div>
+    );
   }
 
   return (
@@ -109,7 +114,7 @@ export function Portmanteaux({
       rowHeight={96}
       valueCount={matchingWordList.length}
     >
-      {withProps({ getValue, gridProps: null }, AutoSizeCell)}
+      {withProps({ getValue }, AutoSizeCell)}
     </AutoSizeGrid>
   );
 }
