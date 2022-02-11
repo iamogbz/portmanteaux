@@ -31,8 +31,8 @@ export function* findAllPaths<T>(
   const currentPath: T[] = [];
   const nodesToVisit: [T, number][] = [[source, depth]];
   const seenNodes = new Set();
-  const excludeSeen = (node: T) => !seenNodes.has(node);
-  // const generatedPathsCache: Map<T, T[][]> = new Map();
+  // const excludeSeen = (node: T) => !seenNodes.has(node);
+  const generatedPathsCache: Map<T, T[][]> = new Map();
   while (nodesToVisit.length > 0) {
     const [[currentNode, currentDepth]] = nodesToVisit.splice(0, 1);
     seenNodes.add(currentNode);
@@ -43,13 +43,9 @@ export function* findAllPaths<T>(
         // .filter(excludeSeen)
         .map((n) => [n, currentDepth + 1] as [T, number])
     );
-    console.log(
-      'current:',
-      currentPath.join('·'),
-      currentNode,
-      '\nnext:',
-      nodesToVisit.join('|')
-    );
+    console.log('currentPath:', `${currentPath}`);
+    console.log('currentNode:', currentNode);
+    console.log('nextNodes:', `${nodesToVisit}`);
 
     currentPath.push(currentNode);
     if (currentNode === target) {
