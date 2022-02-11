@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { collectionToObject } from '../utils/object';
+// import { collectionToObject } from '../utils/object';
 import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
@@ -10,7 +10,7 @@ const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
 
 function buildPortmanteau(left: string, right: string, overlap: number) {
-  return left + right.substr(overlap - right.length);
+  return `${left.substr(0, left.length - overlap)}${right}`;
 }
 
 function buildPortmaneaux(words: Set<string>) {
@@ -30,19 +30,36 @@ function buildPortmaneaux(words: Set<string>) {
     }
   }
 
-  console.log(
-    'built prefix suffix maps:'
-    // '\n[suffixes]',
-    // collectionToObject(wordToSuffixes),
-    // '\n[prefixes]',
-    // collectionToObject(prefixesToWords)
-  );
+  // console.log(
+  // 'prefix suffix maps:'
+  // '\n[suffixes]',
+  // collectionToObject(wordToSuffixes),
+  // '\n[prefixes]',
+  // collectionToObject(prefixesToWords)
+  // );
 
   const portmanteauPairs = new Map<string, Map<string, number>>();
   const wordGraph = new Map<string, Set<string>>();
 
-  // start can traverse to all words to build path
-  wordGraph.set(TOKEN_SOURCE, words);
+  // starting words have no route going back to them
+  const rootWords = new Set(words);
+  for (const [sourceWord, suffixes] of wordToSuffixes) {
+    for (const connection of suffixes) {
+      prefixesToWords.get(connection)?.forEach((nonRootWord) => {
+        rootWords.delete(nonRootWord);
+      });
+    }
+  }
+
+  console.log(
+    'root words:',
+    rootWords.size,
+    '/',
+    words.size
+    /* rootWords */
+  );
+
+  wordGraph.set(TOKEN_SOURCE, rootWords);
   for (const [sourceWord, suffixes] of wordToSuffixes) {
     // all words can traverse to end to complete path
     wordGraph.set(sourceWord, new Set([TOKEN_TARGET]));
@@ -64,7 +81,7 @@ function buildPortmaneaux(words: Set<string>) {
   }
 
   console.log(
-    'built word connectome:',
+    'word connectome:',
     wordGraph.size
     // '\n[graph]',
     // collectionToObject(wordGraph),
@@ -78,7 +95,7 @@ function buildPortmaneaux(words: Set<string>) {
     TOKEN_TARGET
   ).filter((path) => path.length > 3); // exclude single word paths
   console.log(
-    'found all paths',
+    'found all paths:',
     allPortmanteauPaths.length
     // allPortmanteauPaths
   );
