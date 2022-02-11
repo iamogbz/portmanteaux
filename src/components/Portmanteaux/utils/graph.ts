@@ -1,21 +1,23 @@
 export function findAllPaths<T>(
   directionalGraph: Map<T, Set<T>>,
   source: T,
-  target: T,
-  currentPath: T[] = []
+  target: T
 ): T[][] {
-  const path = [...currentPath, source];
-  if (source === target) {
-    return [path];
+  const finishedPaths: T[][] = [];
+  const ongoingPaths: T[][] = [[source]];
+
+  while (ongoingPaths.length > 0) {
+    const currentPath = ongoingPaths.pop();
+    if (!currentPath) continue;
+    const seenNodes = new Set(currentPath);
+    const lastNode = currentPath[currentPath.length - 1];
+    directionalGraph.get(lastNode)?.forEach((nextNode) => {
+      if (seenNodes.has(nextNode)) return;
+      const newPath = [...currentPath, nextNode];
+      if (nextNode === target) finishedPaths.push(newPath);
+      else ongoingPaths.push(newPath);
+    });
   }
 
-  const nextNodes = directionalGraph.get(source);
-  if (!nextNodes?.size) {
-    return [];
-  }
-
-  return Array.from(nextNodes)
-    .filter((node) => !path.includes(node))
-    .map((node) => findAllPaths(directionalGraph, node, target, path))
-    .reduce((previous, current) => [...previous, ...current]);
+  return finishedPaths;
 }

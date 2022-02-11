@@ -4,7 +4,7 @@ import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
 
-const WORD_COUNT = 100;
+const WORD_COUNT = 1000;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
@@ -43,28 +43,21 @@ function buildPortmaneaux(words: Set<string>) {
 
   // start can traverse to all words to build path
   wordGraph.set(TOKEN_SOURCE, words);
-
   for (const [sourceWord, suffixes] of wordToSuffixes) {
+    // all words can traverse to end to complete path
+    wordGraph.set(sourceWord, new Set([TOKEN_TARGET]));
     for (const connection of suffixes) {
       prefixesToWords.get(connection)?.forEach((targetWord) => {
-        const overlap = connection.length;
-        // set overlap of portmanteau pair for easy combination later
         if (!portmanteauPairs.has(sourceWord)) {
           portmanteauPairs.set(sourceWord, new Map());
         }
+        const overlap = connection.length;
+        // set overlap of portmanteau pair for easy combination later
         portmanteauPairs.get(sourceWord)!.set(targetWord, overlap);
-
         // filter out portmanteaus that are existing full words
         const portmanteau = buildPortmanteau(sourceWord, targetWord, overlap);
-        if (words.has(portmanteau)) {
-          return;
-        }
-
+        if (words.has(portmanteau)) return;
         // set mapping of source word (left) to target word (right) for portmanteaus
-        if (!wordGraph.has(sourceWord)) {
-          // all words can traverse to end to complete path
-          wordGraph.set(sourceWord, new Set([TOKEN_TARGET]));
-        }
         wordGraph.get(sourceWord)!.add(targetWord);
       });
     }
@@ -82,22 +75,21 @@ function buildPortmaneaux(words: Set<string>) {
     wordGraph,
     TOKEN_SOURCE,
     TOKEN_TARGET
-  );
+  ).filter((path) => path.length > 3); // exclude single word paths
   console.log('found all paths', allPortmanteauPaths);
-  return [];
 
-  // const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
-  //   const path = pathWithEnds.slice(1, -1);
-  //   let portmanteaux = path[0];
-  //   for (let i = 1; i < path.length; i++) {
-  //     const [left, right] = path.slice(i - 1, i + 1);
-  //     const overlap = portmanteauPairs.get(left)!.get(right)!;
-  //     portmanteaux = buildPortmanteau(portmanteaux, right, overlap);
-  //   }
-  //   return portmanteaux;
-  // });
+  const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
+    const path = pathWithEnds.slice(1, -1);
+    let portmanteaux = path[0];
+    for (let i = 1; i < path.length; i++) {
+      const [left, right] = path.slice(i - 1, i + 1);
+      const overlap = portmanteauPairs.get(left)!.get(right)!;
+      portmanteaux = buildPortmanteau(portmanteaux, right, overlap);
+    }
+    return portmanteaux;
+  });
 
-  // return allPortmanteaux;
+  return allPortmanteaux;
 }
 
 export function usePortmanteaux(): string[] {
