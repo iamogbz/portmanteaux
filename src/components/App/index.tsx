@@ -23,7 +23,7 @@ export function App(): JSX.Element {
     React.useCallback(
       function handleChange(e) {
         e.preventDefault();
-        setTimeout(() => setTextValue(e.target.value), 500);
+        setTimeout(() => setTextValue(e.target.value), 300);
       },
       [setTextValue]
     );
