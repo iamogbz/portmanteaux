@@ -92,11 +92,11 @@ function buildPortmaneaux(words: Set<string>) {
 
   const findAllPathsLogLabel = 'found all paths:';
   console.time(findAllPathsLogLabel);
-  const allPortmanteauPaths = findAllPaths(
+  const allPortmanteauPaths = [...findAllPaths(
     wordGraph,
     TOKEN_SOURCE,
     TOKEN_TARGET
-  ).filter((path) => path.length > 3); // exclude single word paths
+  )].filter((path) => path.length > 3); // exclude single word paths
   console.timeEnd(findAllPathsLogLabel);
   console.log(
     findAllPathsLogLabel,
