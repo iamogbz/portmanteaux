@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Colors } from '../../constants/styles';
 import { withProps } from './hocs/withProps';
-import { usePortmanteauxList } from './hooks/usePortmanteauxList';
+import { usePortmanteauxList } from './hooks/usePortmanteaux';
 
 const Word = styled.span`
   align-items: center;
@@ -31,7 +31,7 @@ interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
   getValue: (
     columnCount: number,
     columnIndex: number,
-    rowIndex: number,
+    rowIndex: number
   ) => string;
 }
 
@@ -96,7 +96,7 @@ export function Portmanteaux({
       const index = columnIndex + columnCount * rowIndex;
       return matchingWordList[index];
     },
-    [matchingWordList],
+    [matchingWordList]
   );
 
   if (!matchingWordList.length) {

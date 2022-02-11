@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { findAllPaths } from '../utils/graph';
 
-import { useWordList } from './useWordList';
+import { useWords } from './useWords';
 
+const WORD_COUNT = 10;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
@@ -11,10 +12,10 @@ function buildPortmanteau(left: string, right: string, overlap: number) {
   return left + right.substr(overlap - right.length);
 }
 
-function buildPortmaneauxChain(wordList: string[]) {
+function buildPortmaneaux(words: Set<string>) {
   const wordToSuffixes: Map<string, Set<string>> = new Map();
   const prefixesToWords: Map<string, Set<string>> = new Map();
-  for (const word of wordList) {
+  for (const word of words) {
     if (!wordToSuffixes.has(word)) {
       wordToSuffixes.set(word, new Set());
     }
@@ -28,7 +29,6 @@ function buildPortmaneauxChain(wordList: string[]) {
     }
   }
 
-  const words = new Set(wordList);
   const portmanteauPairs = new Map<string, Map<string, number>>();
   const wordGraph = new Map<string, Set<string>>();
 
@@ -64,7 +64,7 @@ function buildPortmaneauxChain(wordList: string[]) {
   const allPortmanteauPaths = findAllPaths(
     wordGraph,
     TOKEN_SOURCE,
-    TOKEN_TARGET,
+    TOKEN_TARGET
   );
   const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
     const path = pathWithEnds.slice(1, -1);
@@ -80,22 +80,14 @@ function buildPortmaneauxChain(wordList: string[]) {
   return allPortmanteaux;
 }
 
-function shouldIncludeWord(word: string): boolean {
-  return new Set(word.split('')).size >= UNIQUE_LETTERS;
-}
-
-export function usePortmanteauxList(): string[] {
-  const wordList = useWordList();
+export function usePortmanteaux(): string[] {
+  const words = useWords(WORD_COUNT, UNIQUE_LETTERS);
   const [portmanteauxList, setPortmanteauxList] = React.useState<string[]>([]);
 
-  const acceptedWords = React.useMemo(() => {
-    return wordList.filter(shouldIncludeWord);
-  }, [wordList]);
-
   React.useEffect(() => {
-    const uniquePortmanteaus = new Set(buildPortmaneauxChain(acceptedWords));
+    const uniquePortmanteaus = buildPortmaneaux(words);
     setPortmanteauxList(Array.from(uniquePortmanteaus));
-  }, [acceptedWords]);
+  }, [words]);
 
   return portmanteauxList;
 }
