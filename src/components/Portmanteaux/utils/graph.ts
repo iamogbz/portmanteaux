@@ -24,6 +24,8 @@ import { collectionToObject } from '../../Portmanteaux/utils/object';
 //   return finishedPaths;
 // }
 
+type Tree<T> = Map<T, Tree<T> | undefined>;
+
 export function* findAllPaths<T>(
   directionalGraph: Map<T, Map<T, number>>,
   source: T,
@@ -61,13 +63,15 @@ export function* findAllPaths<T>(
       if (!generatedPathsCache.has(completePath[0])) {
         generatedPathsCache.set(completePath[0], []);
       }
-      generatedPathsCache.get(completePath[0]).push(completePath);
+      if (completePath.length > 1) {
+        generatedPathsCache.get(completePath[0]).push(completePath.slice(1));
+      }
 
       console.log('yielded:', `${completePath}`);
       yield completePath;
     }
-    console.log('all:', collectionToObject(generatedPathsCache));
   }
+  console.log('all:', collectionToObject(generatedPathsCache));
 }
 
 /**
