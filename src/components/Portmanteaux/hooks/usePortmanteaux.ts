@@ -4,7 +4,7 @@ import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
 
-const WORD_COUNT = 3000;
+const WORD_COUNT = 1000;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
@@ -82,7 +82,8 @@ function buildPortmaneaux(words: Set<string>) {
 
   console.log(
     'word connectome:',
-    wordGraph.size
+    wordGraph.size,
+    'nodes'
     // '\n[graph]',
     // collectionToObject(wordGraph),
     // '\n[pairs]',
@@ -99,7 +100,8 @@ function buildPortmaneaux(words: Set<string>) {
   console.timeEnd(findAllPathsLogLabel);
   console.log(
     findAllPathsLogLabel,
-    allPortmanteauPaths.length
+    allPortmanteauPaths.length,
+    'items'
     // allPortmanteauPaths
   );
 
