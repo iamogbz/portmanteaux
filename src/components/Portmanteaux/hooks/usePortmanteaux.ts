@@ -64,7 +64,8 @@ function buildPortmaneaux(words: Set<string>) {
   }
 
   console.log(
-    'built word connectome:'
+    'built word connectome:',
+    wordGraph.size
     // '\n[graph]',
     // collectionToObject(wordGraph),
     // '\n[pairs]',
@@ -76,7 +77,11 @@ function buildPortmaneaux(words: Set<string>) {
     TOKEN_SOURCE,
     TOKEN_TARGET
   ).filter((path) => path.length > 3); // exclude single word paths
-  console.log('found all paths', allPortmanteauPaths.length);
+  console.log(
+    'found all paths',
+    allPortmanteauPaths.length
+    // allPortmanteauPaths
+  );
 
   const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
     const path = pathWithEnds.slice(1, -1);
