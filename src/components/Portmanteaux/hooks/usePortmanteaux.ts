@@ -74,9 +74,9 @@ function buildPortmaneaux(words: Set<string>) {
 
   const findAllPathsLogLabel = 'found all paths:';
   console.time(findAllPathsLogLabel);
-  const allPortmanteauPaths = [
-    ...findAllPaths(wordGraph, TOKEN_SOURCE, TOKEN_TARGET),
-  ].filter((path) => path.length > 3); // exclude single word paths
+  const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)].filter(
+    (path) => path.length > 1
+  ); // exclude single word paths
   console.timeEnd(findAllPathsLogLabel);
   console.log(
     findAllPathsLogLabel,
@@ -85,8 +85,7 @@ function buildPortmaneaux(words: Set<string>) {
     // allPortmanteauPaths
   );
 
-  const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
-    const path = pathWithEnds.slice(1, -1);
+  const allPortmanteaux = allPortmanteauPaths.map((path) => {
     let portmanteaux = path[0];
     for (let i = 1; i < path.length; i++) {
       const [left, right] = path.slice(i - 1, i + 1);

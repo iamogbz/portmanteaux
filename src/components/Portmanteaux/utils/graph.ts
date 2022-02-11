@@ -6,6 +6,8 @@
 //   const finishedPaths: T[][] = [];
 //   const ongoingPaths: T[][] = [[source]];
 
+import { collectionToObject } from '../../Portmanteaux/utils/object';
+
 //   while (ongoingPaths.length > 0) {
 //     const currentPath = ongoingPaths.pop();
 //     if (!currentPath) continue;
@@ -25,7 +27,7 @@
 export function* findAllPaths<T>(
   directionalGraph: Map<T, Map<T, number>>,
   source: T,
-  target: T
+  target?: T
 ): Generator<T[]> {
   const currentPath: T[] = [];
   const nodesToVisit: (readonly [T, number])[] = [[source, 0]];
@@ -51,16 +53,20 @@ export function* findAllPaths<T>(
     currentPath.push(currentNode);
     nodesToVisit.splice(0, 0, ...childNodes);
 
-    if (currentNode === target) {
+    const isSufficient = currentPath.length > 2;
+    const isDone = childNodes.length === 0 || currentNode === target;
+    if (isDone && isSufficient) {
+      const completePath = currentPath.slice(1, -1);
       // cache each fully traversed path
-      // if (!generatedPathsCache.has(currentPath[1])) {
-      //   generatedPathsCache.set(currentPath[1], []);
-      // }
-      // generatedPathsCache.get(currentPath[1]).push(currentPath);
+      if (!generatedPathsCache.has(completePath[0])) {
+        generatedPathsCache.set(completePath[0], []);
+      }
+      generatedPathsCache.get(completePath[0]).push(completePath);
 
-      console.log('yielded:', `${currentPath}`);
-      yield [...currentPath];
+      console.log('yielded:', `${completePath}`);
+      yield completePath;
     }
+    console.log('all:', collectionToObject(generatedPathsCache));
   }
 }
 
