@@ -6,8 +6,8 @@ import { useWords } from './useWords';
 
 const WORD_COUNT = 1000;
 const UNIQUE_LETTERS = 3;
-const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
-const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
+const TOKEN_SOURCE = '{S}'; // special string to mark start of portmanteaux
+const TOKEN_TARGET = '{T}'; // special string to mark end of portmanteaux
 
 function buildPortmanteau(left: string, right: string, overlap: number) {
   return `${left.substr(0, left.length - overlap)}${right}`;
@@ -38,44 +38,26 @@ function buildPortmaneaux(words: Set<string>) {
   // collectionToObject(prefixesToWords)
   // );
 
-  const portmanteauPairs = new Map<string, Map<string, number>>();
-  const wordGraph = new Map<string, Set<string>>();
+  const wordGraph = new Map<string, Map<string, number>>();
 
-  // starting words have no route going back to them
-  const rootWords = new Set(words);
-  for (const [sourceWord, suffixes] of wordToSuffixes) {
-    for (const connection of suffixes) {
-      prefixesToWords.get(connection)?.forEach((nonRootWord) => {
-        rootWords.delete(nonRootWord);
-      });
-    }
-  }
-
-  console.log(
-    'root words:',
-    rootWords.size,
-    '/',
-    words.size
-    /* rootWords */
-  );
-
-  wordGraph.set(TOKEN_SOURCE, rootWords);
+  // check all words for the start of a portmanteau
+  wordGraph.set(TOKEN_SOURCE, new Map(Array.from(words).map((w) => [w, 0])));
   for (const [sourceWord, suffixes] of wordToSuffixes) {
     // all words can traverse to end to complete path
-    wordGraph.set(sourceWord, new Set([TOKEN_TARGET]));
+    wordGraph.set(sourceWord, new Map([[TOKEN_TARGET, 0]]));
     for (const connection of suffixes) {
       prefixesToWords.get(connection)?.forEach((targetWord) => {
-        if (!portmanteauPairs.has(sourceWord)) {
-          portmanteauPairs.set(sourceWord, new Map());
-        }
+        // if (!portmanteauPairs.has(sourceWord)) {
+        //   portmanteauPairs.set(sourceWord, new Map());
+        // }
         const overlap = connection.length;
         // set overlap of portmanteau pair for easy combination later
-        portmanteauPairs.get(sourceWord)!.set(targetWord, overlap);
+        // portmanteauPairs.get(sourceWord)!.set(targetWord, overlap);
         // filter out portmanteaus that are existing full words
         const portmanteau = buildPortmanteau(sourceWord, targetWord, overlap);
         if (words.has(portmanteau)) return;
         // set mapping of source word (left) to target word (right) for portmanteaus
-        wordGraph.get(sourceWord)!.add(targetWord);
+        wordGraph.get(sourceWord)!.set(targetWord, overlap);
       });
     }
   }
@@ -108,7 +90,7 @@ function buildPortmaneaux(words: Set<string>) {
     let portmanteaux = path[0];
     for (let i = 1; i < path.length; i++) {
       const [left, right] = path.slice(i - 1, i + 1);
-      const overlap = portmanteauPairs.get(left)!.get(right)!;
+      const overlap = wordGraph.get(left)!.get(right)!;
       portmanteaux = buildPortmanteau(portmanteaux, right, overlap);
     }
     return portmanteaux;

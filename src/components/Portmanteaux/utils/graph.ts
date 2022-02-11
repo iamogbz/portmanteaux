@@ -23,32 +23,41 @@
 // }
 
 export function* findAllPaths<T>(
-  directionalGraph: Map<T, Set<T>>,
+  directionalGraph: Map<T, Map<T, number>>,
   source: T,
   target: T
 ): Generator<T[]> {
-  const depth = 0;
   const currentPath: T[] = [];
-  const nodesToVisit: [T, number][] = [[source, depth]];
-  const seenNodes = new Set();
+  const nodesToVisit: (readonly [T, number])[] = [[source, 0]];
+  // const seenNodes = new Set();
   // const excludeSeen = (node: T) => !seenNodes.has(node);
   const generatedPathsCache: Map<T, T[][]> = new Map();
   while (nodesToVisit.length > 0) {
     const [[currentNode, currentDepth]] = nodesToVisit.splice(0, 1);
-    seenNodes.add(currentNode);
-    nodesToVisit.splice(
-      0,
-      0,
-      ...Array.from(directionalGraph.get(currentNode) ?? [])
-        // .filter(excludeSeen)
-        .map((n) => [n, currentDepth + 1] as [T, number])
-    );
-    console.log('currentPath:', `${currentPath}`);
+    // seenNodes.add(currentNode);
+    const childNodes = Array.from(directionalGraph.get(currentNode) ?? [])
+      // .filter(excludeSeen)
+      .map(([n]) => [n, currentDepth + 1] as const);
+
+    console.log('---');
+    console.log('currentPath:', `[${currentPath}]`);
     console.log('currentNode:', currentNode);
-    console.log('nextNodes:', `${nodesToVisit}`);
+    console.log('currentDepth:', currentDepth);
+    console.log('childNodes:', `[${childNodes}]`);
+    console.log('nextNodes:', `[${nodesToVisit}]`);
+    console.log('---');
 
     currentPath.push(currentNode);
+    nodesToVisit.splice(0, 0, ...childNodes);
+
     if (currentNode === target) {
+      // cache each fully traversed path
+      // if (!generatedPathsCache.has(currentPath[1])) {
+      //   generatedPathsCache.set(currentPath[1], []);
+      // }
+      // generatedPathsCache.get(currentPath[1]).push(currentPath);
+
+      console.log('yielded:', `${currentPath}`);
       yield [...currentPath];
       currentPath.splice(-currentDepth + 1, currentDepth);
     }
