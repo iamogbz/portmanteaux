@@ -77,13 +77,15 @@ function buildPortmaneaux(words: Set<string>) {
     '\n[pairs]',
     collectionToObject(portmanteauPairs)
   );
+
+  const allPortmanteauPaths = findAllPaths(
+    wordGraph,
+    TOKEN_SOURCE,
+    TOKEN_TARGET
+  );
+  console.log('found all paths', allPortmanteauPaths);
   return [];
 
-  // const allPortmanteauPaths = findAllPaths(
-  //   wordGraph,
-  //   TOKEN_SOURCE,
-  //   TOKEN_TARGET
-  // );
   // const allPortmanteaux = allPortmanteauPaths.map((pathWithEnds) => {
   //   const path = pathWithEnds.slice(1, -1);
   //   let portmanteaux = path[0];

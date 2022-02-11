@@ -2,7 +2,7 @@ export function findAllPaths<T>(
   directionalGraph: Map<T, Set<T>>,
   source: T,
   target: T,
-  currentPath: T[] = [],
+  currentPath: T[] = []
 ): T[][] {
   const path = [...currentPath, source];
   if (source === target) {
