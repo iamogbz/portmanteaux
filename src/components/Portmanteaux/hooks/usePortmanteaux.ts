@@ -5,7 +5,7 @@ import { findAllPaths } from '../utils/graph';
 import { useWords } from './useWords';
 
 const WORD_COUNT = 1000;
-const UNIQUE_LETTERS = 3;
+const UNIQUE_LETTERS = 10;
 const TOKEN_SOURCE = '{S}'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '{T}'; // special string to mark end of portmanteaux
 
