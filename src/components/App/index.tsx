@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export function App(): JSX.Element {
-  const [textValue, setTextValue] = React.useState('');
+  const [textValue, setTextValue] = React.useState('block head');
   const onChange: React.ChangeEventHandler<HTMLInputElement> =
     React.useCallback(
       function handleChange(e) {
