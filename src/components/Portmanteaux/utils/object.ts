@@ -1,27 +1,38 @@
-type Key = string | number;
+type CollectionKey<T> = T extends Map<infer K, any>
+  ? K extends keyof any
+    ? K
+    : never
+  : never;
 
-type CollectionToObject<T> = T extends Map<Key, infer V>
-  ? Record<Key, CollectionToObject<V>>
+type CollectionValue<T> = T extends Map<keyof any, infer V>
+  ? V
   : T extends Set<infer V>
-  ? CollectionToObject<V>[]
-  : T;
+  ? V
+  : never;
 
-export function collectionToObject<V>(
-  c: Map<Key, V> | Set<V> | V
-): CollectionToObject<typeof c> {
+type CollectionPojo<T> = CollectionKey<T> extends never
+  ? CollectionValue<T> extends never
+    ? T
+    : CollectionPojo<CollectionValue<T>>[]
+  : Record<CollectionKey<T>, CollectionPojo<CollectionValue<T>>>;
+
+export function collectionToObject<T>(c: T): CollectionPojo<T> {
   if (c instanceof Map) {
-    const o = {} as CollectionToObject<Map<Key, V>>;
-    c.forEach((v: V, k: Key) => {
-      o[k] = collectionToObject(v) as CollectionToObject<V>;
+    const o = {} as Record<
+      CollectionKey<T>,
+      CollectionPojo<CollectionValue<T>>
+    >;
+    c.forEach((v: CollectionValue<T>, k: CollectionKey<T>) => {
+      o[k] = collectionToObject(v);
     });
-    return o;
+    return o as CollectionPojo<T>;
   } else if (c instanceof Set) {
-    const l = [] as CollectionToObject<Set<V>>;
-    c.forEach((v: V) => {
-      l.push(collectionToObject(v) as CollectionToObject<V>);
+    const l = [] as CollectionPojo<CollectionValue<T>>[];
+    c.forEach((v: CollectionValue<T>) => {
+      l.push(collectionToObject(v));
     });
-    return l;
+    return l as CollectionPojo<T>;
   } else {
-    return c as CollectionToObject<V>;
+    return c as CollectionPojo<T>;
   }
 }
