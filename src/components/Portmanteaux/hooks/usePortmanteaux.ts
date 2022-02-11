@@ -31,8 +31,10 @@ function buildPortmaneaux(words: Set<string>) {
   }
 
   console.log(
-    'built prefix suffix maps'
+    'built prefix suffix maps:'
+    // '\n[suffixes]',
     // collectionToObject(wordToSuffixes),
+    // '\n[prefixes]',
     // collectionToObject(prefixesToWords)
   );
 
@@ -68,7 +70,13 @@ function buildPortmaneaux(words: Set<string>) {
     }
   }
 
-  console.log('built word graph' /* collectionToObject(wordGraph) */);
+  console.log(
+    'built word connectome:',
+    '\n[graph]',
+    collectionToObject(wordGraph),
+    '\n[pairs]',
+    collectionToObject(portmanteauPairs)
+  );
   return [];
 
   // const allPortmanteauPaths = findAllPaths(
