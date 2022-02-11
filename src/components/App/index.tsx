@@ -18,12 +18,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export function App(): JSX.Element {
-  const [textValue, setTextValue] = React.useState('block head');
+  const [textValue, setTextValue] = React.useState('');
   const onChange: React.ChangeEventHandler<HTMLInputElement> =
     React.useCallback(
       function handleChange(e) {
         e.preventDefault();
-        setTimeout(() => setTextValue(e.target.value), 300);
+        setTimeout(() => setTextValue(e.target.value), 500);
       },
       [setTextValue]
     );
@@ -47,6 +47,7 @@ export function App(): JSX.Element {
       >
         <TextInput
           onChange={onChange}
+          type="input"
           placeholder="Type to filter portmanteaux"
           style={{ textAlign: 'center', width: 400 }}
         />

@@ -4,7 +4,7 @@ import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
 
-const WORD_COUNT = 100;
+const WORD_COUNT = 1000;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '{S}'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '{T}'; // special string to mark end of portmanteaux
@@ -13,7 +13,7 @@ function buildPortmanteau(left: string, right: string, overlap: number) {
   return `${left.substr(0, left.length - overlap)}${right}`;
 }
 
-function buildPortmaneaux(words: Set<string>) {
+async function buildPortmaneaux(words: Set<string>) {
   const wordToSuffixes: Map<string, Set<string>> = new Map();
   const prefixesToWords: Map<string, Set<string>> = new Map();
   for (const word of words) {
@@ -52,9 +52,7 @@ function buildPortmaneaux(words: Set<string>) {
   const findAllPathsLogLabel = 'found all paths:';
   console.time(findAllPathsLogLabel);
 
-  const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)].filter(
-    (path) => path.length > 1
-  );
+  const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)];
 
   console.timeEnd(findAllPathsLogLabel);
   console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
@@ -72,14 +70,13 @@ function buildPortmaneaux(words: Set<string>) {
   return allPortmanteaux;
 }
 
-function buildMatcher(filterQuery?: string): RegExp {
-  return new RegExp(
-    filterQuery
-      ?.split(' ')
-      ?.map((s) => s.trim().toLocaleLowerCase())
-      ?.join('|') ?? '',
-    'i'
-  );
+function buildMatcher(filterQuery?: string): (text: string) => boolean {
+  const matcher = filterQuery
+    ?.split(' ')
+    ?.map((s) => s.trim().toLocaleLowerCase())
+    ?.filter(Boolean);
+  return (text) =>
+    matcher?.length ? matcher.some((m) => text.includes(m)) : true;
 }
 
 export function usePortmanteaux(filterQuery?: string): string[] {
@@ -91,8 +88,14 @@ export function usePortmanteaux(filterQuery?: string): string[] {
   const [portmanteaux, setPortmanteaux] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    const uniquePortmanteaus = buildPortmaneaux(words);
-    setPortmanteaux(Array.from(uniquePortmanteaus));
+    buildPortmaneaux(words)
+      .then((unique) => Array.from(unique))
+      .then((portmanteaus) =>
+        portmanteaus.sort(
+          (a, b) => b.length - a.length || Math.random() - Math.random()
+        )
+      )
+      .then(setPortmanteaux);
   }, [words]);
 
   return portmanteaux;

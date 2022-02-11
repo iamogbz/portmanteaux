@@ -3,7 +3,7 @@ import * as React from 'react';
 export function useWords(
   maxWordCount: number,
   minLetterCount: number,
-  wordMatcher: RegExp
+  wordMatcher: (text: string) => boolean
 ) {
   const [wordList, setWordList] = React.useState<string[]>();
   const [words, setWords] = React.useState(new Set<string>());
@@ -26,17 +26,16 @@ export function useWords(
     function parseWordList() {
       if (!wordList) return;
 
-      console.log(`loaded words: ${wordList.length}`, {
-        maxWordCount,
-        minLetterCount,
-      });
-
       const parsedWords = wordList
-        .filter((w) => w.match(wordMatcher))
+        .filter(wordMatcher)
         .filter((w) => new Set(w.split('')).size >= minLetterCount)
         .slice(0, maxWordCount);
 
-      console.log(parsedWords);
+      console.log(`parsed words: ${parsedWords.length}/${wordList.length}`, {
+        maxWordCount,
+        minLetterCount,
+        wordMatcher,
+      });
 
       setWords(new Set(parsedWords));
     },
