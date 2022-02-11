@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 export function useWords(maxWordCount: number, minLetterCount: number) {
+  console.log('use words', { maxWordCount, minLetterCount });
   const [words, setWords] = React.useState(new Set<string>());
 
   React.useEffect(

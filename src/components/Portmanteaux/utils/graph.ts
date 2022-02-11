@@ -21,3 +21,9 @@ export function findAllPaths<T>(
 
   return finishedPaths;
 }
+
+/**
+ * 1
+ * 1 2
+ * 1 3
+ */
