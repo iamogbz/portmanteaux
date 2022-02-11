@@ -34,6 +34,7 @@ export function* findAllPaths<T>(
   const generatedPathsCache: Map<T, T[][]> = new Map();
   while (nodesToVisit.length > 0) {
     const [[currentNode, currentDepth]] = nodesToVisit.splice(0, 1);
+    currentPath.splice(currentDepth);
     // seenNodes.add(currentNode);
     const childNodes = Array.from(directionalGraph.get(currentNode) ?? [])
       // .filter(excludeSeen)
@@ -59,7 +60,6 @@ export function* findAllPaths<T>(
 
       console.log('yielded:', `${currentPath}`);
       yield [...currentPath];
-      currentPath.splice(-currentDepth + 1, currentDepth);
     }
   }
 }
