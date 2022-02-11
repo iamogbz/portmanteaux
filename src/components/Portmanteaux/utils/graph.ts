@@ -24,8 +24,6 @@ import { collectionToObject } from '../../Portmanteaux/utils/object';
 //   return finishedPaths;
 // }
 
-type Tree<T> = Map<T, Tree<T> | undefined>;
-
 export function* findAllPaths<T>(
   directionalGraph: Map<T, Map<T, number>>,
   source: T,
@@ -39,6 +37,20 @@ export function* findAllPaths<T>(
   while (nodesToVisit.length > 0) {
     const [[currentNode, currentDepth]] = nodesToVisit.splice(0, 1);
     currentPath.splice(currentDepth);
+
+    // yield values from cache and continue
+    if (generatedPathsCache.has(currentNode)) {
+      for (const cachedPath of generatedPathsCache.get(currentNode)) {
+        const currentNodeIndex = cachedPath.findIndex((n) => n === currentNode);
+        const generatedPath = currentPath
+          .slice(1)
+          .splice(-1, 0, ...cachedPath.slice(0, Math.max(0, currentNodeIndex)));
+        console.log('reyielded:', `${generatedPath}`);
+        yield generatedPath;
+      }
+      continue;
+    }
+
     // seenNodes.add(currentNode);
     const childNodes = Array.from(directionalGraph.get(currentNode) ?? [])
       // .filter(excludeSeen)
@@ -59,29 +71,19 @@ export function* findAllPaths<T>(
     const isDone = childNodes.length === 0 || currentNode === target;
     if (isDone && isSufficient) {
       const completePath = currentPath.slice(1, -1);
+
       // cache each fully traversed path
-      if (!generatedPathsCache.has(completePath[0])) {
-        generatedPathsCache.set(completePath[0], []);
+      const [keyNode, ...valuePath] = completePath;
+      if (!generatedPathsCache.has(keyNode)) {
+        generatedPathsCache.set(keyNode, []);
       }
-      if (completePath.length > 1) {
-        generatedPathsCache.get(completePath[0]).push(completePath.slice(1));
+      if (valuePath.length > 0) {
+        generatedPathsCache.get(keyNode).push(valuePath);
       }
 
       console.log('yielded:', `${completePath}`);
       yield completePath;
     }
+    console.log('all:', collectionToObject(generatedPathsCache));
   }
-  console.log('all:', collectionToObject(generatedPathsCache));
 }
-
-/**
- * {0:[1,2],1:[3,4],2:[4,5],3:[4]}
- * target: 4
- * next    | path
- * [0]     | []
- * [1,2]   | [0]
- * [3,4,2] | [0,1]
- * [4,4,2] | [0,1,3]
- * [4,2]   | [0,1,3,4] -> yield
- * [2]     | [0,1,4] -> yield
- */
