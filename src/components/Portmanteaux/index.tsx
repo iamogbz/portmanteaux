@@ -84,34 +84,17 @@ export function Portmanteaux({
 }: {
   filterText?: string;
 }): JSX.Element {
-  const wordList = usePortmanteaux();
-  const matchingWordList = React.useMemo(() => {
-    return wordList
-      .map((word) => ({
-        word,
-        match:
-          filterText?.split(' ').filter((part) => word.includes(part)).length ??
-          0,
-      }))
-      .filter((m) => m.match)
-      .sort(
-        (a, b) =>
-          b.match - a.match ||
-          b.word.length - a.word.length ||
-          a.word.localeCompare(b.word)
-      )
-      .map((r) => r.word);
-  }, [wordList, filterText]);
+  const wordList = usePortmanteaux(filterText);
 
   const getValue: IAutoSizeCellProps['getValue'] = React.useCallback(
     (columnCount, columnIndex, rowIndex) => {
       const index = columnIndex + columnCount * rowIndex;
-      return matchingWordList[index];
+      return wordList[index];
     },
-    [matchingWordList]
+    [wordList]
   );
 
-  if (!matchingWordList.length) {
+  if (!wordList.length) {
     return (
       <div style={{ textAlign: 'center' }}>
         <h2>No results</h2>
@@ -124,7 +107,7 @@ export function Portmanteaux({
       {...props}
       columnWidth={144}
       rowHeight={96}
-      valueCount={matchingWordList.length}
+      valueCount={wordList.length}
     >
       {withProps({ getValue }, AutoSizeCell)}
     </AutoSizeGrid>

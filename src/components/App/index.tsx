@@ -25,7 +25,7 @@ export function App(): JSX.Element {
         e.preventDefault();
         setTimeout(() => setTextValue(e.target.value), 300);
       },
-      [setTextValue],
+      [setTextValue]
     );
 
   return (

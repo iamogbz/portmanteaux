@@ -1,31 +1,46 @@
 import * as React from 'react';
 
-export function useWords(maxWordCount: number, minLetterCount: number) {
+export function useWords(
+  maxWordCount: number,
+  minLetterCount: number,
+  wordMatcher: RegExp
+) {
+  const [wordList, setWordList] = React.useState<string[]>();
   const [words, setWords] = React.useState(new Set<string>());
 
-  React.useEffect(
-    function loadWordList() {
-      fetch(
-        'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt'
+  React.useEffect(function loadWordList() {
+    fetch(
+      'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt'
+    )
+      .then((response) => response.text())
+      .then((responseText) =>
+        responseText
+          .split('\n')
+          .sort(() => Math.random() - Math.random())
+          .map((w) => w.trim())
       )
-        .then((response) => response.text())
-        .then((words) => {
-          console.log(`loaded words: ${words.length}`, {
-            maxWordCount,
-            minLetterCount,
-          });
+      .then(setWordList);
+  }, []);
 
-          const parsedWords = words
-            .split('\n')
-            .sort(() => Math.random() - Math.random())
-            .map((w) => w.trim())
-            .slice(0, maxWordCount)
-            .filter((w) => new Set(w.split('')).size >= minLetterCount);
+  React.useEffect(
+    function parseWordList() {
+      if (!wordList) return;
 
-          setWords(new Set(parsedWords));
-        });
+      console.log(`loaded words: ${wordList.length}`, {
+        maxWordCount,
+        minLetterCount,
+      });
+
+      const parsedWords = wordList
+        .filter((w) => w.match(wordMatcher))
+        .filter((w) => new Set(w.split('')).size >= minLetterCount)
+        .slice(0, maxWordCount);
+
+      console.log(parsedWords);
+
+      setWords(new Set(parsedWords));
     },
-    [maxWordCount, minLetterCount]
+    [wordList, maxWordCount, minLetterCount, wordMatcher]
   );
 
   return words;
