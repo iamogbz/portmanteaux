@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Colors } from '../../constants/styles';
 import { withProps } from './hocs/withProps';
-import { usePortmanteauxList } from './hooks/usePortmanteaux';
+import { usePortmanteaux } from './hooks/usePortmanteaux';
 
 const Word = styled.span`
   align-items: center;
@@ -84,7 +84,7 @@ export function Portmanteaux({
 }: {
   filterText?: string;
 }): JSX.Element {
-  const wordList = usePortmanteauxList();
+  const wordList = usePortmanteaux();
   const matchingWordList = React.useMemo(() => {
     return wordList
       .filter((word) => word.includes(filterText ?? ''))
