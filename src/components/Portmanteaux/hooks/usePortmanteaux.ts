@@ -4,7 +4,7 @@ import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
 
-const WORD_COUNT = 1000;
+const WORD_COUNT = 3000;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
@@ -89,13 +89,16 @@ function buildPortmaneaux(words: Set<string>) {
     // collectionToObject(portmanteauPairs)
   );
 
+  const findAllPathsLogLabel = 'found all paths:';
+  console.time(findAllPathsLogLabel);
   const allPortmanteauPaths = findAllPaths(
     wordGraph,
     TOKEN_SOURCE,
     TOKEN_TARGET
   ).filter((path) => path.length > 3); // exclude single word paths
+  console.timeEnd(findAllPathsLogLabel);
   console.log(
-    'found all paths:',
+    findAllPathsLogLabel,
     allPortmanteauPaths.length
     // allPortmanteauPaths
   );
