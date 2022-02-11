@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 export function useWords(maxWordCount: number, minLetterCount: number) {
-  console.log('use words', { maxWordCount, minLetterCount });
   const [words, setWords] = React.useState(new Set<string>());
 
   React.useEffect(
@@ -11,7 +10,10 @@ export function useWords(maxWordCount: number, minLetterCount: number) {
       )
         .then((response) => response.text())
         .then((words) => {
-          console.log(`loaded words: ${words.length}`);
+          console.log(`loaded words: ${words.length}`, {
+            maxWordCount,
+            minLetterCount,
+          });
 
           const parsedWords = words
             .split('\n')
