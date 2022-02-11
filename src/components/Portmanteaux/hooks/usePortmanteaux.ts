@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { collectionToObject } from '../utils/object';
 import { findAllPaths } from '../utils/graph';
 
 import { useWords } from './useWords';
 
-const WORD_COUNT = 10;
+const WORD_COUNT = 12;
 const UNIQUE_LETTERS = 3;
 const TOKEN_SOURCE = '[S]'; // special string to mark start of portmanteaux
 const TOKEN_TARGET = '[T]'; // special string to mark end of portmanteaux
@@ -28,6 +29,12 @@ function buildPortmaneaux(words: Set<string>) {
       prefixesToWords.get(prefix)?.add(word);
     }
   }
+
+  console.log(
+    'built prefix suffix maps',
+    collectionToObject(wordToSuffixes),
+    collectionToObject(prefixesToWords)
+  );
 
   const portmanteauPairs = new Map<string, Map<string, number>>();
   const wordGraph = new Map<string, Set<string>>();
@@ -82,6 +89,7 @@ function buildPortmaneaux(words: Set<string>) {
 
 export function usePortmanteaux(): string[] {
   const words = useWords(WORD_COUNT, UNIQUE_LETTERS);
+  console.log('loaded words', Array.from(words));
   const [portmanteauxList, setPortmanteauxList] = React.useState<string[]>([]);
 
   React.useEffect(() => {
