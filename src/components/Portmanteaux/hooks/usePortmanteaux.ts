@@ -30,14 +30,6 @@ function buildPortmaneaux(words: Set<string>) {
     }
   }
 
-  // console.log(
-  // 'prefix suffix maps:'
-  // '\n[suffixes]',
-  // collectionToObject(wordToSuffixes),
-  // '\n[prefixes]',
-  // collectionToObject(prefixesToWords)
-  // );
-
   const wordGraph = new Map<string, Map<string, number>>();
 
   // check all words for the start of a portmanteau
@@ -47,9 +39,6 @@ function buildPortmaneaux(words: Set<string>) {
     wordGraph.set(sourceWord, new Map([[TOKEN_TARGET, 0]]));
     for (const connection of suffixes) {
       prefixesToWords.get(connection)?.forEach((targetWord) => {
-        // if (!portmanteauPairs.has(sourceWord)) {
-        //   portmanteauPairs.set(sourceWord, new Map());
-        // }
         const overlap = connection.length;
         // set overlap of portmanteau pair for easy combination later
         // portmanteauPairs.get(sourceWord)!.set(targetWord, overlap);
@@ -62,28 +51,15 @@ function buildPortmaneaux(words: Set<string>) {
     }
   }
 
-  console.log(
-    'word connectome:',
-    wordGraph.size,
-    'nodes'
-    // '\n[graph]',
-    // collectionToObject(wordGraph),
-    // '\n[pairs]',
-    // collectionToObject(portmanteauPairs)
-  );
-
   const findAllPathsLogLabel = 'found all paths:';
   console.time(findAllPathsLogLabel);
+
   const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)].filter(
     (path) => path.length > 1
-  ); // exclude single word paths
-  console.timeEnd(findAllPathsLogLabel);
-  console.log(
-    findAllPathsLogLabel,
-    allPortmanteauPaths.length,
-    'items'
-    // allPortmanteauPaths
   );
+
+  console.timeEnd(findAllPathsLogLabel);
+  console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
 
   const allPortmanteaux = allPortmanteauPaths.map((path) => {
     let portmanteaux = path[0];
@@ -100,12 +76,12 @@ function buildPortmaneaux(words: Set<string>) {
 
 export function usePortmanteaux(): string[] {
   const words = useWords(WORD_COUNT, UNIQUE_LETTERS);
-  const [portmanteauxList, setPortmanteauxList] = React.useState<string[]>([]);
+  const [portmanteaux, setPortmanteaux] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     const uniquePortmanteaus = buildPortmaneaux(words);
-    setPortmanteauxList(Array.from(uniquePortmanteaus));
+    setPortmanteaux(Array.from(uniquePortmanteaus));
   }, [words]);
 
-  return portmanteauxList;
+  return portmanteaux;
 }

@@ -15,9 +15,9 @@ export function useWords(maxWordCount: number, minLetterCount: number) {
             minLetterCount,
           });
 
-          const parsedWords = 'hello\nrohel\nhelonro\nonrow'
+          const parsedWords = words
             .split('\n')
-            .sort((a, b) => Math.random() - Math.random())
+            .sort(() => Math.random() - Math.random())
             .map((w) => w.trim())
             .slice(0, maxWordCount)
             .filter((w) => new Set(w.split('')).size >= minLetterCount);
