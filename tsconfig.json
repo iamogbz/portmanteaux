@@ -6,6 +6,8 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment",
     "lib": ["DOM", "ES2016"],
     "module": "commonjs",
     "moduleResolution": "node",

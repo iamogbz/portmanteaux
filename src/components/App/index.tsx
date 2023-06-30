@@ -25,7 +25,7 @@ export function App(): JSX.Element {
         e.preventDefault();
         setTimeout(() => setTextValue(e.target.value), 300);
       },
-      [setTextValue],
+      [setTextValue]
     );
 
   return (
@@ -47,6 +47,7 @@ export function App(): JSX.Element {
       >
         <TextInput
           onChange={onChange}
+          type="input"
           placeholder="Type to filter portmanteaux"
           style={{ textAlign: 'center', width: 400 }}
         />

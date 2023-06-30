@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Colors } from '../../constants/styles';
 import { withProps } from './hocs/withProps';
-import { usePortmanteauxList } from './hooks/usePortmanteauxList';
+import { usePortmanteaux } from './hooks/usePortmanteaux';
 
 const Word = styled.span`
   align-items: center;
@@ -31,7 +31,7 @@ interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
   getValue: (
     columnCount: number,
     columnIndex: number,
-    rowIndex: number,
+    rowIndex: number
   ) => string;
 }
 
@@ -84,22 +84,17 @@ export function Portmanteaux({
 }: {
   filterText?: string;
 }): JSX.Element {
-  const wordList = usePortmanteauxList();
-  const matchingWordList = React.useMemo(() => {
-    return wordList
-      .filter((word) => word.includes(filterText ?? ''))
-      .sort((a, b) => b.length - a.length || a.localeCompare(b));
-  }, [wordList, filterText]);
+  const wordList = usePortmanteaux(filterText);
 
   const getValue: IAutoSizeCellProps['getValue'] = React.useCallback(
     (columnCount, columnIndex, rowIndex) => {
       const index = columnIndex + columnCount * rowIndex;
-      return matchingWordList[index];
+      return wordList[index];
     },
-    [matchingWordList],
+    [wordList]
   );
 
-  if (!matchingWordList.length) {
+  if (!wordList.length) {
     return (
       <div style={{ textAlign: 'center' }}>
         <h2>No results</h2>
@@ -112,7 +107,7 @@ export function Portmanteaux({
       {...props}
       columnWidth={144}
       rowHeight={96}
-      valueCount={matchingWordList.length}
+      valueCount={wordList.length}
     >
       {withProps({ getValue }, AutoSizeCell)}
     </AutoSizeGrid>
