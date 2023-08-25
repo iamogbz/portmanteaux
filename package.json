@@ -1,5 +1,6 @@
 {
   "name": "portmanteaux",
+  "homepage": "https://ogbizi.com/portmanteaux",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
