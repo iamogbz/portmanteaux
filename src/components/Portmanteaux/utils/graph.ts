@@ -3,10 +3,10 @@ import { collectionToObject } from '../../Portmanteaux/utils/object';
 export function* findAllPaths<T>(
   directionalGraph: Map<T, Map<T, number>>,
   source: T,
-  target?: T
+  target?: T,
 ): Generator<T[]> {
   const currentPath: T[] = [];
-  const nodesToVisit: (readonly [T, number])[] = [[source, 0]];
+  const nodesToVisit: Array<readonly [T, number]> = [[source, 0]];
 
   while (nodesToVisit.length > 0) {
     const [[currentNode, currentDepth]] = nodesToVisit.splice(0, 1);

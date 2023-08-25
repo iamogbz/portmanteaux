@@ -42,7 +42,7 @@ async function buildPortmaneaux(words: Set<string>) {
         const overlap = connection.length;
         // filter out portmanteaus that are existing full words
         const portmanteau = buildPortmanteau(sourceWord, targetWord, overlap);
-        if (words.has(portmanteau)) return;
+        if (words.has(portmanteau)) { return; }
         // set mapping of source word (left) to target word (right) for portmanteaus
         wordGraph.get(sourceWord)!.set(targetWord, overlap);
       });
@@ -50,12 +50,12 @@ async function buildPortmaneaux(words: Set<string>) {
   }
 
   const findAllPathsLogLabel = 'found all paths:';
-  console.time(findAllPathsLogLabel);
+  // console.time(findAllPathsLogLabel);
 
   const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)];
 
-  console.timeEnd(findAllPathsLogLabel);
-  console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
+  // console.timeEnd(findAllPathsLogLabel);
+  // console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
 
   const allPortmanteaux = allPortmanteauPaths.map((path) => {
     let portmanteaux = path[0];
@@ -82,7 +82,7 @@ function buildMatcher(filterQuery?: string): (text: string) => boolean {
 export function usePortmanteaux(filterQuery?: string): string[] {
   const wordMatcher = React.useMemo(
     () => buildMatcher(filterQuery),
-    [filterQuery]
+    [filterQuery],
   );
   const words = useWords(WORD_COUNT, UNIQUE_LETTERS, wordMatcher);
   const [portmanteaux, setPortmanteaux] = React.useState<string[]>([]);
@@ -92,8 +92,8 @@ export function usePortmanteaux(filterQuery?: string): string[] {
       .then((unique) => Array.from(unique))
       .then((portmanteaus) =>
         portmanteaus.sort(
-          (a, b) => b.length - a.length || Math.random() - Math.random()
-        )
+          (a, b) => b.length - a.length || Math.random() - Math.random(),
+        ),
       )
       .then(setPortmanteaux);
   }, [words]);

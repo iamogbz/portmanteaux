@@ -6,14 +6,14 @@ type CollectionKey<T> = T extends Map<infer K, any>
 
 type CollectionValue<T> = T extends Map<keyof any, infer V>
   ? V
-  : T extends Set<infer V>
-  ? V
+  : T extends Set<infer U>
+  ? U
   : never;
 
 type CollectionPojo<T> = CollectionKey<T> extends never
   ? CollectionValue<T> extends never
     ? T
-    : CollectionPojo<CollectionValue<T>>[]
+    : Array<CollectionPojo<CollectionValue<T>>>
   : Record<CollectionKey<T>, CollectionPojo<CollectionValue<T>>>;
 
 export function collectionToObject<T>(c: T): CollectionPojo<T> {
@@ -27,7 +27,7 @@ export function collectionToObject<T>(c: T): CollectionPojo<T> {
     });
     return o as CollectionPojo<T>;
   } else if (c instanceof Set) {
-    const l = [] as CollectionPojo<CollectionValue<T>>[];
+    const l = [] as Array<CollectionPojo<CollectionValue<T>>>;
     c.forEach((v: CollectionValue<T>) => {
       l.push(collectionToObject(v));
     });

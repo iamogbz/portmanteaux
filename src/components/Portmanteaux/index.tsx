@@ -31,7 +31,7 @@ interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
   getValue: (
     columnCount: number,
     columnIndex: number,
-    rowIndex: number
+    rowIndex: number,
   ) => string;
 }
 
@@ -91,7 +91,7 @@ export function Portmanteaux({
       const index = columnIndex + columnCount * rowIndex;
       return wordList[index];
     },
-    [wordList]
+    [wordList],
   );
 
   if (!wordList.length) {
