@@ -1,4 +1,4 @@
-# [Portmanteaux 🌐](https://portmanteaux.stackblitz.io)
+# [Portmanteaux 🌐](https://ogbizi.com/portmanteaux)
 
 Find all portmanteaux created from given words
 
