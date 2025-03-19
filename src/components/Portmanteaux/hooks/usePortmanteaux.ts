@@ -50,12 +50,12 @@ async function buildPortmaneaux(words: Set<string>) {
   }
 
   const findAllPathsLogLabel = 'found all paths:';
-  console.time(findAllPathsLogLabel);
+  // console.time(findAllPathsLogLabel);
 
   const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)];
 
-  console.timeEnd(findAllPathsLogLabel);
-  console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
+  // console.timeEnd(findAllPathsLogLabel);
+  // console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
 
   const allPortmanteaux: Record<string, Set<string>> = {};
 
