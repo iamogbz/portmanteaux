@@ -42,7 +42,7 @@ async function buildPortmaneaux(words: Set<string>) {
         const overlap = connection.length;
         // filter out portmanteaus that are existing full words
         const portmanteau = buildPortmanteau(sourceWord, targetWord, overlap);
-        if (words.has(portmanteau)) { return; }
+        if (words.has(portmanteau)) return;
         // set mapping of source word (left) to target word (right) for portmanteaus
         wordGraph.get(sourceWord)!.set(targetWord, overlap);
       });
@@ -50,21 +50,28 @@ async function buildPortmaneaux(words: Set<string>) {
   }
 
   const findAllPathsLogLabel = 'found all paths:';
-  // console.time(findAllPathsLogLabel);
+  console.time(findAllPathsLogLabel);
 
   const allPortmanteauPaths = [...findAllPaths(wordGraph, TOKEN_SOURCE)];
 
-  // console.timeEnd(findAllPathsLogLabel);
-  // console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
+  console.timeEnd(findAllPathsLogLabel);
+  console.log(findAllPathsLogLabel, allPortmanteauPaths.length, 'items');
 
-  const allPortmanteaux = allPortmanteauPaths.map((path) => {
+  const allPortmanteaux: Record<string, Set<string>> = {};
+
+  allPortmanteauPaths.forEach((path) => {
     let portmanteaux = path[0];
     for (let i = 1; i < path.length; i++) {
       const [left, right] = path.slice(i - 1, i + 1);
       const overlap = wordGraph.get(left)!.get(right)!;
       portmanteaux = buildPortmanteau(portmanteaux, right, overlap);
     }
-    return portmanteaux;
+    if (portmanteaux in allPortmanteaux) {
+      path.forEach((p) => allPortmanteaux[portmanteaux].add(p));
+    } else {
+      allPortmanteaux[portmanteaux] = new Set(path);
+    }
+    return allPortmanteaux;
   });
 
   return allPortmanteaux;
@@ -79,21 +86,25 @@ function buildMatcher(filterQuery?: string): (text: string) => boolean {
     matcher?.length ? matcher.some((m) => text.includes(m)) : true;
 }
 
-export function usePortmanteaux(filterQuery?: string): string[] {
+export function usePortmanteaux(filterQuery?: string) {
   const wordMatcher = React.useMemo(
     () => buildMatcher(filterQuery),
-    [filterQuery],
+    [filterQuery]
   );
   const words = useWords(WORD_COUNT, UNIQUE_LETTERS, wordMatcher);
-  const [portmanteaux, setPortmanteaux] = React.useState<string[]>([]);
+  const [portmanteaux, setPortmanteaux] = React.useState<
+    [string, Set<string>][]
+  >([]);
 
   React.useEffect(() => {
     buildPortmaneaux(words)
-      .then((unique) => Array.from(unique))
+      .then((px) => Object.entries(px))
       .then((portmanteaus) =>
-        portmanteaus.sort(
-          (a, b) => b.length - a.length || Math.random() - Math.random(),
-        ),
+        portmanteaus
+          .filter(([, p]) => p.size > 1)
+          .sort(
+            ([a], [b]) => b.length - a.length || Math.random() - Math.random()
+          )
       )
       .then(setPortmanteaux);
   }, [words]);
