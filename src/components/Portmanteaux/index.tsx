@@ -11,6 +11,9 @@ import { Colors } from '../../constants/styles';
 import { withProps } from './hocs/withProps';
 import { usePortmanteaux } from './hooks/usePortmanteaux';
 
+const WORD_PATH_DELIM = '|||';
+const PATH_DELIM = ', ';
+
 const Word = styled.span`
   align-items: center;
   cursor: default;
@@ -31,7 +34,7 @@ interface IAutoSizeCellProps extends GridChildComponentProps<string[]> {
   getValue: (
     columnCount: number,
     columnIndex: number,
-    rowIndex: number,
+    rowIndex: number
   ) => string;
 }
 
@@ -42,9 +45,12 @@ function AutoSizeCell({
   rowIndex,
   style,
 }: IAutoSizeCellProps) {
+  const value = getValue(columnCount, columnIndex, rowIndex);
+  if (!value) return null;
+  const [word, path] = value.split(WORD_PATH_DELIM);
   return (
     <span style={style}>
-      <Word>{getValue(columnCount, columnIndex, rowIndex)}</Word>
+      <Word title={path}>{word}</Word>
     </span>
   );
 }
@@ -71,7 +77,9 @@ function AutoSizeGrid({ children, ...props }: IAutoSizeGridProps) {
           ...props,
         };
         return (
-          <Grid {...gridProps}>{withProps({ columnCount }, children)}</Grid>
+          <div id="grid">
+            <Grid {...gridProps}>{withProps({ columnCount }, children)}</Grid>
+          </div>
         );
       }}
     </AutoSizer>
@@ -89,9 +97,14 @@ export function Portmanteaux({
   const getValue: IAutoSizeCellProps['getValue'] = React.useCallback(
     (columnCount, columnIndex, rowIndex) => {
       const index = columnIndex + columnCount * rowIndex;
-      return wordList[index];
+      const value = wordList[index];
+      return value
+        ? `${value[0]}${WORD_PATH_DELIM}${Array.from(value[1]).join(
+            PATH_DELIM
+          )}`
+        : '';
     },
-    [wordList],
+    [wordList]
   );
 
   if (!wordList.length) {
